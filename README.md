@@ -59,6 +59,6 @@ As mentioned before, upcasting a spell will adjust the cost accordingly, which i
 * This was originally designed for personal use, specifically for tracking for sorcerers only and merging sorcerery points into the same pool.
   * While I expanded the scope and converted the sorcery point merged pool into a variant option, this hasn't been tested for every possible configuration.
   * Things may break for you that I may or may not fix. If it's simple enough or affects me specifically, I'll probably attempt to make it work.
-  * Feel free to open up issue reports here. I'll try to look through them if/when I can.
-  * Otherwise, if you feel so inclined, feel free to attempt a fix yourself and PR it back here. I apologize for the horrible code, but again, was intended for specific personal use.
+  * Feel free to open up [issue reports](https://github.com/Mwr247/DnDBeyondSpellPoints/issues) here. I'll try to look through them if/when I can.
+  * Otherwise, if you feel so inclined, feel free to attempt a fix yourself and [Pull Request](https://github.com/Mwr247/DnDBeyondSpellPoints/pulls) it back here. I apologize for the horrible code, but again, was intended for specific personal use.
 
