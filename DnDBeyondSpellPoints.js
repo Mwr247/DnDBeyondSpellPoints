@@ -47,23 +47,23 @@
     [8,11,true],
     [9,13,true]
   ];
- 	const player = {
-		id: location.pathname.split('/characters/')[1].split('/')[0],
-  	level: 0,
+   const player = {
+    id: location.pathname.split('/characters/')[1].split('/')[0],
+    level: 0,
     points: 0,
-		maxPoints: 0,
-		maxSpellLevel: 0
+    maxPoints: 0,
+    maxSpellLevel: 0
   };
   let useSpellPoints = JSON.parse(localStorage.getItem('useSp' + player.id)) || false;
   let mergeSorcPoints = JSON.parse(localStorage.getItem('mergeSp' + player.id)) || false;
-	setTimeout(() => {
+  setTimeout(() => {
     const content = document.getElementById('content');
     if (!content) {return;}
     const caster = ([...content.getElementsByClassName('ddbc-character-summary__classes')].map(ele => ele.innerText) || [])[0]?.split(' / ').filter(val => /Artificer|Bard|Cleric|Druid|Paladin|Ranger|Sorcerer|Wizard/.test(val));
-		if (useSpellPoints && caster && caster.length) {
+    if (useSpellPoints && caster && caster.length) {
       console.log('Spell point tracker active');
-			const sorc = caster.find(val => /Sorcerer/.test(val));
-			const sorcLvl = sorc != null ? +sorc.split(' ')[1] : 1;
+      const sorc = caster.find(val => /Sorcerer/.test(val));
+      const sorcLvl = sorc != null ? +sorc.split(' ')[1] : 1;
       player.level = caster.reduce((lvl, val) => lvl + ((val.split(' ')[1] * (1 - 0.5 * /Artificer|Paladin|Ranger/.test(val))) | 0), 0);
       player.maxPoints = sp[sorcLvl - 1][1] * mergeSorcPoints + sp[player.level - 1][2];
       player.points = Math.max(player.maxPoints - localStorage.getItem('sp' + player.id) * 1, 0);
@@ -71,43 +71,43 @@
       const setPoints = val => {
         val = Math.max(Math.min(val, player.maxPoints), 0);
         player.points = val;
-				localStorage.setItem('sp' + player.id, player.maxPoints - val);
-				(document.getElementById('pointsDisplay') || {}).innerText = player.points + ' / ' + player.maxPoints;
+        localStorage.setItem('sp' + player.id, player.maxPoints - val);
+        (document.getElementById('pointsDisplay') || {}).innerText = player.points + ' / ' + player.maxPoints;
       };
-			const cast = level => {
-				const cost = sc[level - 1][1];
-				return evt => {
-					if (player.points >= cost){
+      const cast = level => {
+        const cost = sc[level - 1][1];
+        return evt => {
+          if (player.points >= cost){
             setPoints(player.points - cost);
             console.log('cast level', level, 'spell with', cost, 'points');
           } else {
             alert('Insufficient spell points');
           }
-					if (!sc[level - 1][2]) {evt.stopPropagation();}
+          if (!sc[level - 1][2]) {evt.stopPropagation();}
         };
       };
       const castClick = evt => {
-				console.log('checking levels');
+        console.log('checking levels');
         setTimeout(() => {
           [...content.getElementsByClassName('ct-content-group')].forEach(el => {
             if (!/^CANTRIP/.test(el.innerText)) {
               const level = +el.innerText[0];
               console.log('level', level);
-							const lvl = el.querySelector('.ct-content-group__header-content');
-							if (!lvl.spFlag){
+              const lvl = el.querySelector('.ct-content-group__header-content');
+              if (!lvl.spFlag){
                 lvl.spFlag = true;
                 lvl.innerText += ' (Cost ' + sc[level - 1][1] + ')';
               }
               [...el.getElementsByClassName('ddbc-button')].filter(ele => /CAST$/.test(ele.innerText) && !ele.evtFlag).forEach(ele => {
                 ele.evtFlag = true;
                 if (/Artificer|Bard|Cleric|Druid|Paladin|Ranger|Sorcerer|Wizard/.test(ele.parentNode.parentNode.innerText)) {
-                	ele.addEventListener('click', cast(level));
+                  ele.addEventListener('click', cast(level));
                 }
               });
               [...el.getElementsByClassName('ct-spells-spell')].filter(ele => !ele.evtFlag).forEach(ele => {
                 ele.evtFlag = true;
                 if (/Artificer|Bard|Cleric|Druid|Paladin|Ranger|Sorcerer|Wizard/.test(ele.innerText)) {
-                	ele.addEventListener('click', panelOpenClick);
+                  ele.addEventListener('click', panelOpenClick);
                 }
               });
             }
@@ -115,55 +115,55 @@
         }, 10);
       };
       const actionCastClick = evt => {
-				console.log('checking actions');
+        console.log('checking actions');
         setTimeout(() => {
           [...content.getElementsByClassName('ddbc-combat-attack--spell')].filter(ele => !ele.evtFlag).forEach(ele => {
             ele.evtFlag = true;
-						if (/Artificer|Bard|Cleric|Druid|Paladin|Ranger|Sorcerer|Wizard/.test(ele.innerText)) {
-            	ele.addEventListener('click', panelOpenClick);
-          	}
+            if (/Artificer|Bard|Cleric|Druid|Paladin|Ranger|Sorcerer|Wizard/.test(ele.innerText)) {
+              ele.addEventListener('click', panelOpenClick);
+            }
           });
         }, 10);
       };
       const panelOpenClick = evt => {
-					console.log('opened panel');
+          console.log('opened panel');
           setTimeout(() => {
             const spDetail = document.getElementsByClassName('ct-spell-detail')[0];
-						if (spDetail != null) {
-							const spCast = spDetail.querySelector('.ct-spell-caster__casting-action > button');
-							spCast.innerHTML = spCast.innerHTML.replace('Spell Slot', 'Spell Points');
-							const spLvl = spDetail.getElementsByClassName('ct-spell-caster__casting-level-current')[0];
-							const spCost = spDetail.getElementsByClassName('ct-spell-caster__casting-action-count--spellcasting')[0];
+            if (spDetail != null) {
+              const spCast = spDetail.querySelector('.ct-spell-caster__casting-action > button');
+              spCast.innerHTML = spCast.innerHTML.replace('Spell Slot', 'Spell Points');
+              const spLvl = spDetail.getElementsByClassName('ct-spell-caster__casting-level-current')[0];
+              const spCost = spDetail.getElementsByClassName('ct-spell-caster__casting-action-count--spellcasting')[0];
               console.log('spell level:', spLvl.innerText[0]);
               spCast.spLvl = spLvl.innerText[0];
-							spCost.innerText = sc[+spCast.spLvl - 1][1];
+              spCost.innerText = sc[+spCast.spLvl - 1][1];
               spCast.addEventListener('click', evt => cast(+spCast.spLvl)(evt));
-							[...spDetail.getElementsByClassName('ct-spell-caster__casting-level-action')].forEach(ele => {
+              [...spDetail.getElementsByClassName('ct-spell-caster__casting-level-action')].forEach(ele => {
                 ele.addEventListener('click', evt => {
-									setTimeout(() => {
-										console.log('spell level:', spLvl.innerText[0]);
-										spCast.spLvl = spLvl.innerText[0];
-										spCost.innerText = sc[+spCast.spLvl - 1][1];
+                  setTimeout(() => {
+                    console.log('spell level:', spLvl.innerText[0]);
+                    spCast.spLvl = spLvl.innerText[0];
+                    spCost.innerText = sc[+spCast.spLvl - 1][1];
                   }, 10);
                 });
               });
             }
           }, 50);
       };
-			const actionClick = evt => {
+      const actionClick = evt => {
         console.log('clicked actions');
-				setTimeout(() => {
-					[...content.querySelectorAll('.ct-actions__content .ddbc-tab-options__header')].forEach(ele => ele.addEventListener('click', actionCastClick));
-					actionCastClick(evt);
+        setTimeout(() => {
+          [...content.querySelectorAll('.ct-actions__content .ddbc-tab-options__header')].forEach(ele => ele.addEventListener('click', actionCastClick));
+          actionCastClick(evt);
         }, 50);
       };
-			const spellClick = evt => {
-				console.log('clicked spells');
-				setTimeout(() => {
-					let tmp = content.getElementsByClassName('ct-spells-level-casting__info-group')[2];
-					let pdc = tmp.cloneNode(true);
-					pdc.childNodes[1].innerText = 'Spell Points';
-					pdc.childNodes[0].childNodes[0].innerText = '';
+      const spellClick = evt => {
+        console.log('clicked spells');
+        setTimeout(() => {
+          let tmp = content.getElementsByClassName('ct-spells-level-casting__info-group')[2];
+          let pdc = tmp.cloneNode(true);
+          pdc.childNodes[1].innerText = 'Spell Points';
+          pdc.childNodes[0].childNodes[0].innerText = '';
           let pdSub = document.createElement('span');
           pdSub.innerText = '–';
           pdSub.style.color = '#BB0000';
@@ -176,12 +176,12 @@
           pd.innerText = player.points + ' / ' + player.maxPoints;
           pd.id = 'pointsDisplay';
           pd.style.margin = '0 4px';
-					pd.addEventListener('click', evt => {
+          pd.addEventListener('click', evt => {
             let val = prompt('Override Spell Points', player.points);
-						if (val == null) {return;}
-						else {val = +val;}
-						if (val >= 0) {setPoints(val);}
-						else {alert('Invalid point value');}
+            if (val == null) {return;}
+            else {val = +val;}
+            if (val >= 0) {setPoints(val);}
+            else {alert('Invalid point value');}
           });
           pdc.childNodes[0].childNodes[0].appendChild(pd);
           let pdAdd = document.createElement('span');
@@ -192,24 +192,24 @@
             setPoints(player.points + 1);
           });
           pdc.childNodes[0].childNodes[0].appendChild(pdAdd);
-					tmp.parentNode.appendChild(pdc);
-					[...content.querySelectorAll('.ct-spells__content .ddbc-tab-options__header')].forEach(ele => ele.addEventListener('click', castClick));
-					content.getElementsByClassName('ct-spells-filter__input')[0].addEventListener('input', castClick);
-					castClick(evt);
+          tmp.parentNode.appendChild(pdc);
+          [...content.querySelectorAll('.ct-spells__content .ddbc-tab-options__header')].forEach(ele => ele.addEventListener('click', castClick));
+          content.getElementsByClassName('ct-spells-filter__input')[0].addEventListener('input', castClick);
+          castClick(evt);
         }, 50);
       };
-			const rest = evt => {
+      const rest = evt => {
         setPoints(player.maxPoints);
       };
       const restClick = evt => {
         setTimeout(() => {
-					document.querySelector('.ct-reset-pane__action .ct-button--confirm').addEventListener('click', rest);
+          document.querySelector('.ct-reset-pane__action .ct-button--confirm').addEventListener('click', rest);
         }, 50);
       };
       content.getElementsByClassName('ct-primary-box__tab--spells')[0].addEventListener('click', spellClick);
-			content.getElementsByClassName('ct-primary-box__tab--actions')[0].addEventListener('click', actionClick);
-			actionClick();
-			content.querySelector('.ct-character-header-desktop__group--long-rest .ct-character-header-desktop__button').addEventListener('click', restClick);
+      content.getElementsByClassName('ct-primary-box__tab--actions')[0].addEventListener('click', actionClick);
+      actionClick();
+      content.querySelector('.ct-character-header-desktop__group--long-rest .ct-character-header-desktop__button').addEventListener('click', restClick);
     } else {
       const hashChange = evt => {
         if (/\/home\/basic/.test(window.location.hash)) {
@@ -218,33 +218,33 @@
             mergeSorcPoints = JSON.parse(localStorage.getItem('mergeSp' + player.id)) || false;
             const opt = [...content.getElementsByClassName('builder-field builder-field-toggles')].find(ele => /Optional Features/.test(ele.innerText));
             const tmp = opt.getElementsByClassName('builder-field-toggles-field')[0];
-    				const useSp = tmp.cloneNode(true);
-    				useSp.childNodes[1].innerText = 'Use Spell Points (Variant Rule)';
-    				useSp.childNodes[0].childNodes[0].classList.remove('ddbc-toggle-field--is-enabled', 'ddbc-toggle-field--is-disabled');
+            const useSp = tmp.cloneNode(true);
+            useSp.childNodes[1].innerText = 'Use Spell Points (Variant Rule)';
+            useSp.childNodes[0].childNodes[0].classList.remove('ddbc-toggle-field--is-enabled', 'ddbc-toggle-field--is-disabled');
             useSp.childNodes[0].childNodes[0].classList.add(useSpellPoints ? 'ddbc-toggle-field--is-enabled' : 'ddbc-toggle-field--is-disabled');
             useSp.childNodes[0].addEventListener('click', evt => {
               useSpellPoints = !useSpellPoints;
               localStorage.setItem('useSp' + player.id, useSpellPoints);
               useSp.childNodes[0].childNodes[0].classList.remove('ddbc-toggle-field--is-enabled', 'ddbc-toggle-field--is-disabled');
-            	useSp.childNodes[0].childNodes[0].classList.add(useSpellPoints ? 'ddbc-toggle-field--is-enabled' : 'ddbc-toggle-field--is-disabled');
+              useSp.childNodes[0].childNodes[0].classList.add(useSpellPoints ? 'ddbc-toggle-field--is-enabled' : 'ddbc-toggle-field--is-disabled');
             });
             tmp.parentNode.appendChild(useSp);
-    				const mergeSp = tmp.cloneNode(true);
-    				mergeSp.childNodes[1].innerText = 'Combine Spell Points with Sorcery Points';
+            const mergeSp = tmp.cloneNode(true);
+            mergeSp.childNodes[1].innerText = 'Combine Spell Points with Sorcery Points';
             mergeSp.childNodes[0].childNodes[0].classList.remove('ddbc-toggle-field--is-enabled', 'ddbc-toggle-field--is-disabled');
             mergeSp.childNodes[0].childNodes[0].classList.add(mergeSorcPoints ? 'ddbc-toggle-field--is-enabled' : 'ddbc-toggle-field--is-disabled');
             mergeSp.childNodes[0].addEventListener('click', evt => {
               mergeSorcPoints = !mergeSorcPoints;
               localStorage.setItem('mergeSp' + player.id, mergeSorcPoints);
               mergeSp.childNodes[0].childNodes[0].classList.remove('ddbc-toggle-field--is-enabled', 'ddbc-toggle-field--is-disabled');
-            	mergeSp.childNodes[0].childNodes[0].classList.add(mergeSorcPoints ? 'ddbc-toggle-field--is-enabled' : 'ddbc-toggle-field--is-disabled');
+              mergeSp.childNodes[0].childNodes[0].classList.add(mergeSorcPoints ? 'ddbc-toggle-field--is-enabled' : 'ddbc-toggle-field--is-disabled');
             });
             tmp.parentNode.appendChild(mergeSp);
           }, 50);
-  			}
+        }
       };
       hashChange();
-			window.addEventListener('hashchange', hashChange);
+      window.addEventListener('hashchange', hashChange);
     }
     console.log('player', player);
   }, 1000);
