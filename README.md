@@ -5,7 +5,7 @@ A spell point tracker userscript for [DnDBeyond](https://www.dndbeyond.com)
 
 Ever wanted to use the [Spell Point Variant Rule](https://www.dndbeyond.com/sources/dmg/dungeon-masters-workshop#VariantSpellPoints) (DMG 288-289), but lamented that the feature [still hasn't been implemented](https://dndbeyond.zendesk.com/hc/en-us/community/posts/360023004153-Spell-Points)?
 
-This is a [userscript](https://en.wikipedia.org/wiki/Userscript) that implements a locally persistant spell point tracker right into your character sheet, allowing you to manage your spell points from within DnDBeyond.
+This is a [userscript](https://en.wikipedia.org/wiki/Userscript) that implements a locally persistent spell point tracker right into your character sheet, allowing you to manage your spell points from within DnDBeyond.
 
 ## Features
 
@@ -36,7 +36,7 @@ This is a [userscript](https://en.wikipedia.org/wiki/Userscript) that implements
 
 As mentioned before, upcasting a spell will adjust the cost accordingly, which is also reflected in the number above the casting button, and the "Spell Slot" is changed to "Spell Points".
 
-![sp3](https://user-images.githubusercontent.com/613020/121754393-86ec8800-cae2-11eb-8a58-fb6ab1e5c416.png)
+![Spell Description Sidebar](https://user-images.githubusercontent.com/613020/121754393-86ec8800-cae2-11eb-8a58-fb6ab1e5c416.png)
 
 ## Notes / Known Issues
 
@@ -50,6 +50,7 @@ As mentioned before, upcasting a spell will adjust the cost accordingly, which i
   * Specifically not supported subclasses are: Arcane Trickster and Eldritch Knight (or any other subclass-based caster).
   * Classes that don't have magic will work fine to multiclass with as well.
 * Casting spells (except for 6-9th level) won't show the usual info popup at the bottom, since the default casting is overridden.
+  * Spell slots are still shown and toggleable manually, since hiding them could cause issues if they accidentally get toggled automatically.
 * If you have multiple spells of 6/7th level, it will let you cast them both.
   * This is to allow homebrew flexibility, and because limiting it automatically adds complexity. Just keep track yourself if necessary.
 * Long rests are the only rests that automatically reset spell points. Clicking the button resets regardless of whether or not you confirm after.
