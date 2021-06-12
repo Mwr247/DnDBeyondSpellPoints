@@ -5,7 +5,7 @@
 // @author       Mwr247
 // @namespace    Mwr247
 // @homepageURL  https://github.com/Mwr247/DnDBeyondSpellPoints
-// @include      https://www.dndbeyond.com/profile/*
+// @include      https://www.dndbeyond.com/*characters/*
 // @run-at       document-idle
 // @grant        none
 // ==/UserScript==
