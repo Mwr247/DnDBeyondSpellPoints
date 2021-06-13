@@ -47,20 +47,22 @@
     [8,11,true],
     [9,13,true]
   ];
-   const player = {
+  const player = {
     id: location.pathname.split('/characters/')[1].split('/')[0],
     level: 0,
     points: 0,
     maxPoints: 0,
     maxSpellLevel: 0
   };
+  let loaded = 5;
   let useSpellPoints = JSON.parse(localStorage.getItem('useSp' + player.id)) || false;
   let mergeSorcPoints = JSON.parse(localStorage.getItem('mergeSp' + player.id)) || false;
-  setTimeout(() => {
+  const init = () => {
     const content = document.getElementById('content');
     if (!content) {return;}
     const caster = ([...content.getElementsByClassName('ddbc-character-summary__classes')].map(ele => ele.innerText) || [])[0]?.split(' / ').filter(val => /Artificer|Bard|Cleric|Druid|Paladin|Ranger|Sorcerer|Wizard/.test(val));
-    if (useSpellPoints && caster && caster.length) {
+    if (caster && caster.length) {
+      if (!useSpellPoints) {return;}
       console.log('Spell point tracker active');
       const sorc = caster.find(val => /Sorcerer/.test(val));
       const sorcLvl = sorc != null ? +sorc.split(' ')[1] : 1;
@@ -210,7 +212,8 @@
       content.getElementsByClassName('ct-primary-box__tab--actions')[0].addEventListener('click', actionClick);
       actionClick();
       content.querySelector('.ct-character-header-desktop__group--long-rest .ct-character-header-desktop__button').addEventListener('click', restClick);
-    } else {
+      loaded = 0;
+    } else if (/\/builder/.test(window.location.pathname)) {
       const hashChange = evt => {
         if (/\/home\/basic/.test(window.location.hash)) {
           setTimeout(() => {
@@ -245,7 +248,17 @@
       };
       hashChange();
       window.addEventListener('hashchange', hashChange);
+      loaded = 0;
+    } else {
+      if (loaded-- > 0) {
+        console.log('attempting to load point tracker...');
+        setTimeout(init, 1000);
+      }else {
+        console.log('point tracker failed to load');
+      }
+      return;
     }
     console.log('player', player);
-  }, 1000);
+  };
+  setTimeout(init, 1000);
 })();
