@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         DnDBeyond Spell Points
 // @description  Spell point tracker
-// @version      1
+// @version      1.1
 // @author       Mwr247
 // @namespace    Mwr247
 // @homepageURL  https://github.com/Mwr247/DnDBeyondSpellPoints
@@ -58,7 +58,7 @@
   let useSpellPoints = JSON.parse(localStorage.getItem('useSp' + player.id)) || false;
   let mergeSorcPoints = JSON.parse(localStorage.getItem('mergeSp' + player.id)) || false;
   const init = () => {
-    const content = document.getElementById('content');
+    const content = document.getElementById('character-tools-target');
     if (!content) {return;}
     const caster = ([...content.getElementsByClassName('ddbc-character-summary__classes')].map(ele => ele.innerText) || [])[0]?.split(' / ').filter(val => /Artificer|Bard|Cleric|Druid|Paladin|Ranger|Sorcerer|Wizard/.test(val));
     if (caster && caster.length) {
@@ -215,7 +215,7 @@
       loaded = 0;
     } else if (/\/builder/.test(window.location.pathname)) {
       const hashChange = evt => {
-        if (/\/home\/basic/.test(window.location.hash)) {
+        if (/\/home\/basic/.test(window.location.pathname)) {
           setTimeout(() => {
             useSpellPoints = JSON.parse(localStorage.getItem('useSp' + player.id)) || false;
             mergeSorcPoints = JSON.parse(localStorage.getItem('mergeSp' + player.id)) || false;
@@ -247,7 +247,6 @@
         }
       };
       hashChange();
-      window.addEventListener('hashchange', hashChange);
       loaded = 0;
     } else {
       if (loaded-- > 0) {
@@ -260,5 +259,18 @@
     }
     console.log('player', player);
   };
-  setTimeout(init, 1000);
+  let initializer = null;
+  let prevUrl = '';
+  const obs = new MutationObserver(mut => {
+    if (location.href !== prevUrl) {
+      prevUrl = location.href;
+      let delay = 1000;
+      if (/\/builder/.test(window.location.pathname) && loaded === 0) {
+        delay = 0;
+      }
+      clearTimeout(initializer);
+      initalizer = setTimeout(init, delay);
+    }
+  });
+  obs.observe(document, {subtree: true, childList: true});
 })();
