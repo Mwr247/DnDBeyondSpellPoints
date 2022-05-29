@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         DnDBeyond Spell Points
 // @description  Spell point tracker
-// @version      1.1
+// @version      1.2
 // @author       Mwr247
 // @namespace    Mwr247
 // @homepageURL  https://github.com/Mwr247/DnDBeyondSpellPoints
@@ -66,7 +66,7 @@
       console.log('Spell point tracker active');
       const sorc = caster.find(val => /Sorcerer/.test(val));
       const sorcLvl = sorc != null ? +sorc.split(' ')[1] : 1;
-      player.level = caster.reduce((lvl, val) => lvl + ((val.split(' ')[1] * (1 - 0.5 * /Artificer|Paladin|Ranger/.test(val))) | 0), 0);
+      player.level = Math.ceil(caster.reduce((lvl, val) => lvl + ((val.split(' ')[1] * (1 - 0.5 * /Artificer|Paladin|Ranger/.test(val)))), 0));
       player.maxPoints = sp[sorcLvl - 1][1] * mergeSorcPoints + sp[player.level - 1][2];
       player.points = Math.max(player.maxPoints - localStorage.getItem('sp' + player.id) * 1, 0);
       player.maxSpellLevel = sp[player.level - 1][3];
