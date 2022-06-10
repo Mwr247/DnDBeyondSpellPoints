@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         DnDBeyond Spell Points
 // @description  Spell point tracker
-// @version      1.2
+// @version      1.2.1
 // @author       Mwr247
 // @namespace    Mwr247
 // @homepageURL  https://github.com/Mwr247/DnDBeyondSpellPoints
@@ -269,7 +269,7 @@
         delay = 0;
       }
       clearTimeout(initializer);
-      initalizer = setTimeout(init, delay);
+      initializer = setTimeout(init, delay);
     }
   });
   obs.observe(document, {subtree: true, childList: true});
