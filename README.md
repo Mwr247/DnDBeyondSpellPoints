@@ -1,4 +1,4 @@
-## V2 has been released! [DnD Beyond Spell Points V2](https://github.com/Mwr247/DnDBeyondSpellPointsV2)
+## V2 has been released! [DnDBeyond Spell Points V2](https://github.com/Mwr247/DnDBeyondSpellPointsV2)
 
 # DnDBeyond Spell Points
 A spell point tracker userscript for [DnDBeyond](https://www.dndbeyond.com). 
