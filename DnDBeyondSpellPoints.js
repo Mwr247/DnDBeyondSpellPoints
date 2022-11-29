@@ -102,13 +102,13 @@
               }
               [...el.getElementsByClassName('ddbc-button')].filter(ele => /CAST$/.test(ele.innerText) && !ele.evtFlag).forEach(ele => {
                 ele.evtFlag = true;
-                if (/Artificer|Bard|Cleric|Druid|Paladin|Ranger|Sorcerer|Wizard/.test(ele.parentNode.parentNode.innerText)) {
+                if (/Artificer|Bard|Cleric|Druid|Paladin|Ranger|Sorcerer|Wizard|Psionic Spells/.test(ele.parentNode.parentNode.innerText)) {
                   ele.addEventListener('click', cast(level));
                 }
               });
               [...el.getElementsByClassName('ct-spells-spell')].filter(ele => !ele.evtFlag).forEach(ele => {
                 ele.evtFlag = true;
-                if (/Artificer|Bard|Cleric|Druid|Paladin|Ranger|Sorcerer|Wizard/.test(ele.innerText)) {
+                if (/Artificer|Bard|Cleric|Druid|Paladin|Ranger|Sorcerer|Wizard|Psionic Spells/.test(ele.innerText)) {
                   ele.addEventListener('click', panelOpenClick);
                 }
               });
@@ -121,7 +121,7 @@
         setTimeout(() => {
           [...content.getElementsByClassName('ddbc-combat-attack--spell')].filter(ele => !ele.evtFlag).forEach(ele => {
             ele.evtFlag = true;
-            if (/Artificer|Bard|Cleric|Druid|Paladin|Ranger|Sorcerer|Wizard/.test(ele.innerText)) {
+            if (/Artificer|Bard|Cleric|Druid|Paladin|Ranger|Sorcerer|Wizard|Psionic Spells/.test(ele.innerText)) {
               ele.addEventListener('click', panelOpenClick);
             }
           });
