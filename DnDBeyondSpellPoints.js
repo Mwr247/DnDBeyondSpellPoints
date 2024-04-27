@@ -1,10 +1,12 @@
 // ==UserScript==
 // @name         DnDBeyond Spell Points
 // @description  Spell point tracker
-// @version      1.2.1
+// @version      1.3.0
 // @author       Mwr247
 // @namespace    Mwr247
 // @homepageURL  https://github.com/Mwr247/DnDBeyondSpellPoints
+// @downloadURL  https://raw.githubusercontent.com/Mwr247/DnDBeyondSpellPoints/main/DnDBeyondSpellPoints.js
+// @updateURL    https://raw.githubusercontent.com/Mwr247/DnDBeyondSpellPoints/main/DnDBeyondSpellPoints.js
 // @include      https://www.dndbeyond.com/*characters/*
 // @run-at       document-idle
 // @grant        none
@@ -208,8 +210,8 @@
           document.querySelector('.ct-reset-pane__action .ct-button--confirm').addEventListener('click', rest);
         }, 50);
       };
-      content.getElementsByClassName('ct-primary-box__tab--spells')[0].addEventListener('click', spellClick);
-      content.getElementsByClassName('ct-primary-box__tab--actions')[0].addEventListener('click', actionClick);
+      [...content.querySelectorAll('.ct-primary-box button')].filter(a => a.innerText.toLowerCase() === 'spells')[0].addEventListener('click', spellClick);
+      [...content.querySelectorAll('.ct-primary-box button')].filter(a => a.innerText.toLowerCase() === 'actions')[0].addEventListener('click', actionClick);
       actionClick();
       content.querySelector('.ct-character-header-desktop__group--long-rest .ct-character-header-desktop__button').addEventListener('click', restClick);
       loaded = 0;
