@@ -65,18 +65,47 @@
     const caster = ([...content.getElementsByClassName('ddbc-character-summary__classes')].map(ele => ele.innerText) || [])[0]?.split(' / ').filter(val => /Artificer|Bard|Cleric|Druid|Paladin|Ranger|Sorcerer|Wizard/.test(val));
     if (caster && caster.length) {
       if (!useSpellPoints) {return;}
+      const rawMaxPoints = localStorage.getItem('spMax' + player.id) || false;
       console.log('Spell point tracker active');
+      console.log('spMax: ' + rawMaxPoints);
       const sorc = caster.find(val => /Sorcerer/.test(val));
       const sorcLvl = sorc != null ? +sorc.split(' ')[1] : 1;
       player.level = Math.ceil(caster.reduce((lvl, val) => lvl + ((val.split(' ')[1] * (1 - 0.5 * /Artificer|Paladin|Ranger/.test(val)))), 0));
-      player.maxPoints = sp[sorcLvl - 1][1] * mergeSorcPoints + sp[player.level - 1][2];
+      if (rawMaxPoints && rawMaxPoints != -1) {
+        player.maxPoints = localStorage.getItem('spMax' + player.id);
+      }
+      else {
+        player.maxPoints = sp[sorcLvl - 1][1] * mergeSorcPoints + sp[player.level - 1][2];
+        localStorage.setItem('spMax' + player.id, player.maxPoints);
+      }
       player.points = Math.max(player.maxPoints - localStorage.getItem('sp' + player.id) * 1, 0);
       player.maxSpellLevel = sp[player.level - 1][3];
       const setPoints = val => {
         val = Math.max(Math.min(val, player.maxPoints), 0);
         player.points = val;
         localStorage.setItem('sp' + player.id, player.maxPoints - val);
-        (document.getElementById('pointsDisplay') || {}).innerText = player.points + ' / ' + player.maxPoints;
+        (document.getElementById('pointsDisplay') || {}).innerText = player.points;
+      };
+      const setMaxPoints = val => {
+        if (val === -1) {
+          const normalMaximum = (sp[sorcLvl - 1][1] * mergeSorcPoints + sp[player.level - 1][2]);
+          const newPoints = Math.min(player.points, normalMaximum);
+          localStorage.setItem('spMax' + player.id, -1);
+          localStorage.setItem('sp' + player.id, newPoints);
+          player.maxPoints = normalMaximum;
+          player.points = newPoints;
+          (document.getElementById('pointsDisplay') || {}).innerText = player.points;
+          (document.getElementById('pointsDisplayMax') || {}).innerText = '/ ' + player.maxPoints;
+        }
+        else {
+          val = Math.max(val, 1);
+          player.maxPoints = val;
+          player.points = Math.min(player.maxPoints, player.points);
+          localStorage.setItem('sp' + player.id, val - player.points);
+          localStorage.setItem('spMax' + player.id, player.maxPoints);
+          (document.getElementById('pointsDisplay') || {}).innerText = player.points;
+          (document.getElementById('pointsDisplayMax') || {}).innerText = '/ ' + player.maxPoints;
+        }
       };
       const cast = level => {
         const cost = sc[level - 1][1];
@@ -130,29 +159,29 @@
         }, 10);
       };
       const panelOpenClick = evt => {
-          console.log('opened panel');
-          setTimeout(() => {
-            const spDetail = document.getElementsByClassName('ct-spell-detail')[0];
-            if (spDetail != null) {
-              const spCast = spDetail.querySelector('.ct-spell-caster__casting-action > button');
-              spCast.innerHTML = spCast.innerHTML.replace('Spell Slot', 'Spell Points');
-              const spLvl = spDetail.getElementsByClassName('ct-spell-caster__casting-level-current')[0];
-              const spCost = spDetail.getElementsByClassName('ct-spell-caster__casting-action-count--spellcasting')[0];
-              console.log('spell level:', spLvl.innerText[0]);
-              spCast.spLvl = spLvl.innerText[0];
-              spCost.innerText = sc[+spCast.spLvl - 1][1];
-              spCast.addEventListener('click', evt => cast(+spCast.spLvl)(evt));
-              [...spDetail.getElementsByClassName('ct-spell-caster__casting-level-action')].forEach(ele => {
-                ele.addEventListener('click', evt => {
-                  setTimeout(() => {
-                    console.log('spell level:', spLvl.innerText[0]);
-                    spCast.spLvl = spLvl.innerText[0];
-                    spCost.innerText = sc[+spCast.spLvl - 1][1];
-                  }, 10);
-                });
+        console.log('opened panel');
+        setTimeout(() => {
+          const spDetail = document.getElementsByClassName('ct-spell-detail')[0];
+          if (spDetail != null) {
+            const spCast = spDetail.querySelector('.ct-spell-caster__casting-action > button');
+            spCast.innerHTML = spCast.innerHTML.replace('Spell Slot', 'Spell Points');
+            const spLvl = spDetail.getElementsByClassName('ct-spell-caster__casting-level-current')[0];
+            const spCost = spDetail.getElementsByClassName('ct-spell-caster__casting-action-count--spellcasting')[0];
+            console.log('spell level:', spLvl.innerText[0]);
+            spCast.spLvl = spLvl.innerText[0];
+            spCost.innerText = sc[+spCast.spLvl - 1][1];
+            spCast.addEventListener('click', evt => cast(+spCast.spLvl)(evt));
+            [...spDetail.getElementsByClassName('ct-spell-caster__casting-level-action')].forEach(ele => {
+              ele.addEventListener('click', evt => {
+                setTimeout(() => {
+                  console.log('spell level:', spLvl.innerText[0]);
+                  spCast.spLvl = spLvl.innerText[0];
+                  spCost.innerText = sc[+spCast.spLvl - 1][1];
+                }, 10);
               });
-            }
-          }, 50);
+            });
+          }
+        }, 50);
       };
       const actionClick = evt => {
         console.log('clicked actions');
@@ -177,9 +206,9 @@
           });
           pdc.childNodes[0].childNodes[0].appendChild(pdSub);
           let pd = document.createElement('span');
-          pd.innerText = player.points + ' / ' + player.maxPoints;
+          pd.innerText = player.points;
           pd.id = 'pointsDisplay';
-          pd.style.margin = '0 4px';
+          pd.style.margin = '0 0 0 4px';
           pd.addEventListener('click', evt => {
             let val = prompt('Override Spell Points', player.points);
             if (val == null) {return;}
@@ -188,6 +217,18 @@
             else {alert('Invalid point value');}
           });
           pdc.childNodes[0].childNodes[0].appendChild(pd);
+          let pdMax = document.createElement('span');
+          pdMax.innerText = '/ ' + player.maxPoints;
+          pdMax.id = 'pointsDisplayMax';
+          pdMax.style.margin = '0 4px';
+          pdMax.addEventListener('click', evt => {
+            let maxVal = prompt('Override Maximum Spell Points (Enter -1 to reset the value)', player.maxPoints);
+            if (maxVal == null) { return; }
+            else { maxVal = +maxVal; }
+            if (maxVal >= 0 || maxVal === -1) { setMaxPoints(maxVal); }
+            else { alert('Invalid maximum point value'); }
+          });
+          pdc.childNodes[0].childNodes[0].appendChild(pdMax);
           let pdAdd = document.createElement('span');
           pdAdd.innerText = '+';
           pdAdd.style.color = '#00BB00';
