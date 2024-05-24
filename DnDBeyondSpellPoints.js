@@ -5,6 +5,8 @@
 // @author       Mwr247
 // @namespace    Mwr247
 // @homepageURL  https://github.com/Mwr247/DnDBeyondSpellPoints
+// @downloadURL  https://raw.githubusercontent.com/Mwr247/DnDBeyondSpellPoints/main/DnDBeyondSpellPoints.js
+// @updateURL    https://raw.githubusercontent.com/Mwr247/DnDBeyondSpellPoints/main/DnDBeyondSpellPoints.js
 // @include      https://www.dndbeyond.com/*characters/*
 // @run-at       document-idle
 // @grant        none
@@ -59,10 +61,10 @@
   let mergeSorcPoints = JSON.parse(localStorage.getItem('mergeSp' + player.id)) || false;
   const init = () => {
     const content = document.getElementById('character-tools-target');
-    if (!content) { return; }
+    if (!content) {return;}
     const caster = ([...content.getElementsByClassName('ddbc-character-summary__classes')].map(ele => ele.innerText) || [])[0]?.split(' / ').filter(val => /Artificer|Bard|Cleric|Druid|Paladin|Ranger|Sorcerer|Wizard/.test(val));
     if (caster && caster.length) {
-      if (!useSpellPoints) { return; }
+      if (!useSpellPoints) {return;}
       const rawMaxPoints = localStorage.getItem('spMax' + player.id) || false;
       console.log('Spell point tracker active');
       console.log('spMax: ' + rawMaxPoints);
@@ -108,13 +110,13 @@
       const cast = level => {
         const cost = sc[level - 1][1];
         return evt => {
-          if (player.points >= cost) {
+          if (player.points >= cost){
             setPoints(player.points - cost);
             console.log('cast level', level, 'spell with', cost, 'points');
           } else {
             alert('Insufficient spell points');
           }
-          if (!sc[level - 1][2]) { evt.stopPropagation(); }
+          if (!sc[level - 1][2]) {evt.stopPropagation();}
         };
       };
       const castClick = evt => {
@@ -125,7 +127,7 @@
               const level = +el.innerText[0];
               console.log('level', level);
               const lvl = el.querySelector('.ct-content-group__header-content');
-              if (!lvl.spFlag) {
+              if (!lvl.spFlag){
                 lvl.spFlag = true;
                 lvl.innerText += ' (Cost ' + sc[level - 1][1] + ')';
               }
@@ -209,10 +211,10 @@
           pd.style.margin = '0 0 0 4px';
           pd.addEventListener('click', evt => {
             let val = prompt('Override Spell Points', player.points);
-            if (val == null) { return; }
-            else { val = +val; }
-            if (val >= 0) { setPoints(val); }
-            else { alert('Invalid point value'); }
+            if (val == null) {return;}
+            else {val = +val;}
+            if (val >= 0) {setPoints(val);}
+            else {alert('Invalid point value');}
           });
           pdc.childNodes[0].childNodes[0].appendChild(pd);
           let pdMax = document.createElement('span');
@@ -293,7 +295,7 @@
       if (loaded-- > 0) {
         console.log('attempting to load point tracker...');
         setTimeout(init, 1000);
-      } else {
+      }else {
         console.log('point tracker failed to load');
       }
       return;
@@ -313,5 +315,5 @@
       initializer = setTimeout(init, delay);
     }
   });
-  obs.observe(document, { subtree: true, childList: true });
+  obs.observe(document, {subtree: true, childList: true});
 })();
