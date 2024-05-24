@@ -14,38 +14,38 @@
   'use strict';
   const sp = [
     // Class Level, Sorc Points, Spell Points, Max Slot Level
-    [1, 0, 4, 1],
-    [2, 2, 6, 1],
-    [3, 3, 14, 2],
-    [4, 4, 17, 2],
-    [5, 5, 27, 3],
-    [6, 6, 32, 3],
-    [7, 7, 38, 4],
-    [8, 8, 44, 4],
-    [9, 9, 57, 5],
-    [10, 10, 64, 5],
-    [11, 11, 73, 6],
-    [12, 12, 73, 6],
-    [13, 13, 83, 7],
-    [14, 14, 83, 7],
-    [15, 15, 94, 8],
-    [16, 16, 94, 8],
-    [17, 17, 107, 9],
-    [18, 18, 114, 9],
-    [19, 19, 123, 9],
-    [20, 20, 133, 9]
+    [1,0,4,1],
+    [2,2,6,1],
+    [3,3,14,2],
+    [4,4,17,2],
+    [5,5,27,3],
+    [6,6,32,3],
+    [7,7,38,4],
+    [8,8,44,4],
+    [9,9,57,5],
+    [10,10,64,5],
+    [11,11,73,6],
+    [12,12,73,6],
+    [13,13,83,7],
+    [14,14,83,7],
+    [15,15,94,8],
+    [16,16,94,8],
+    [17,17,107,9],
+    [18,18,114,9],
+    [19,19,123,9],
+    [20,20,133,9]
   ];
   const sc = [
     // Spell Level, Point Cost, Limit of 1
-    [1, 2, false],
-    [2, 3, false],
-    [3, 5, false],
-    [4, 6, false],
-    [5, 7, false],
-    [6, 8, true],
-    [7, 10, true],
-    [8, 11, true],
-    [9, 13, true]
+    [1,2,false],
+    [2,3,false],
+    [3,5,false],
+    [4,6,false],
+    [5,7,false],
+    [6,8,true],
+    [7,10,true],
+    [8,11,true],
+    [9,13,true]
   ];
   const player = {
     id: location.pathname.split('/characters/')[1].split('/')[0],
@@ -249,8 +249,8 @@
           document.querySelector('.ct-reset-pane__action .ct-button--confirm').addEventListener('click', rest);
         }, 50);
       };
-      content.getElementsByClassName('ct-primary-box__tab--spells')[0].addEventListener('click', spellClick);
-      content.getElementsByClassName('ct-primary-box__tab--actions')[0].addEventListener('click', actionClick);
+      [...content.querySelectorAll('.ct-primary-box button')].filter(a => a.innerText.toLowerCase() === 'spells')[0].addEventListener('click', spellClick);
+      [...content.querySelectorAll('.ct-primary-box button')].filter(a => a.innerText.toLowerCase() === 'actions')[0].addEventListener('click', actionClick);
       actionClick();
       content.querySelector('.ct-character-header-desktop__group--long-rest .ct-character-header-desktop__button').addEventListener('click', restClick);
       loaded = 0;
